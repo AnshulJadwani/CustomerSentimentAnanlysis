@@ -1,0 +1,29 @@
+{
+    "best_model": "SVM",
+    "model_performance": [
+        {
+            "Model": "Logistic Regression",
+            "Accuracy": 0.9078125,
+            "Precision": 0.9148967263961474,
+            "Recall": 0.9078125,
+            "F1-Score": 0.893271887045542
+        },
+        {
+            "Model": "Naive Bayes",
+            "Accuracy": 0.85625,
+            "Precision": 0.8746552451054981,
+            "Recall": 0.85625,
+            "F1-Score": 0.8098533967620988
+        },
+        {
+            "Model": "SVM",
+            "Accuracy": 0.946875,
+            "Precision": 0.9475487325174825,
+            "Recall": 0.946875,
+            "F1-Score": 0.9446178241695045
+        }
+    ],
+    "feature_count": 5000,
+    "training_samples": 2560,
+    "test_samples": 640
+}
