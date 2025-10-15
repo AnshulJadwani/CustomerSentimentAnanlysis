@@ -9,6 +9,7 @@ import json
 import sys
 import os
 import pandas as pd
+import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
 from pathlib import Path
@@ -21,41 +22,173 @@ from utils.preprocessing import clean_text, get_sentiment_label
 
 # Page configuration
 st.set_page_config(
-    page_title="Sentiment Analysis App",
+    page_title="Customer Sentiment Analysis",
     page_icon="😊",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS
+# Custom CSS with unique gradient theme
 st.markdown("""
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+    
+    * {
+        font-family: 'Poppins', sans-serif;
+    }
+    
     .main {
         padding: 2rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
+    
+    .stApp {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .block-container {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    
+    .block-container p, .block-container label, .block-container span {
+        color: #333 !important;
+    }
+    
     .stTextArea textarea {
         font-size: 16px;
+        border-radius: 15px;
+        border: 2px solid #667eea;
+        padding: 15px;
+        background: #f8f9ff;
+        color: #333 !important;
+        transition: all 0.3s ease;
     }
-    .sentiment-positive {
-        color: #28a745;
-        font-size: 24px;
-        font-weight: bold;
+    
+    .stTextArea textarea:focus {
+        border-color: #764ba2;
+        box-shadow: 0 0 20px rgba(118, 75, 162, 0.3);
+        background: white;
     }
-    .sentiment-negative {
-        color: #dc3545;
-        font-size: 24px;
-        font-weight: bold;
+    
+    .stButton > button {
+        border-radius: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
-    .sentiment-neutral {
-        color: #ffc107;
-        font-size: 24px;
-        font-weight: bold;
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     }
+    
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    [data-testid="stSidebar"] * {
+        color: white !important;
+    }
+    
+    [data-testid="stSidebar"] .stSelectbox > div > div {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    [data-testid="stMetricValue"] {
+        font-size: 28px;
+        font-weight: 700;
+        color: white;
+    }
+    
+    [data-testid="stMetricLabel"] {
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    h1, h2, h3 {
+        color: #764ba2 !important;
+        font-weight: 700;
+    }
+    
+    /* Fix main content text colors */
+    .main p, .main span, .main label, .main div:not([class*="result-box"]):not([class*="metric-card"]) {
+        color: #333 !important;
+    }
+    
+    .result-box {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        padding: 2rem;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        animation: fadeIn 0.5s ease-in;
+    }
+    
+    .positive-box {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    }
+    
+    .negative-box {
+        background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
+    }
+    
+    .neutral-box {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    
     .metric-card {
-        background-color: #f0f2f6;
-        padding: 1rem;
-        border-radius: 0.5rem;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        padding: 1.5rem;
+        border-radius: 15px;
         margin: 0.5rem 0;
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+    
+    hr {
+        border: none;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #667eea, transparent);
+        margin: 2rem 0;
+    }
+    
+    .stAlert {
+        border-radius: 15px;
+        border-left: 5px solid #667eea;
+    }
+    
+    /* Ensure all text in main content area is dark */
+    .stMarkdown, .stText {
+        color: #333 !important;
+    }
+    
+    /* Fix placeholder text */
+    .stTextArea textarea::placeholder {
+        color: #999 !important;
+    }
+    
+    /* Fix warning/info text */
+    .stAlert p {
+        color: #333 !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -117,6 +250,14 @@ def predict_sentiment(text, model, vectorizer):
     probabilities = None
     if hasattr(model, 'predict_proba'):
         probabilities = model.predict_proba(text_vectorized)[0]
+    elif hasattr(model, 'decision_function'):
+        # For SVM without probability=True, use decision_function
+        # and convert to probability-like scores using softmax
+        decision_scores = model.decision_function(text_vectorized)[0]
+        
+        # Apply softmax to convert decision scores to probabilities
+        exp_scores = np.exp(decision_scores - np.max(decision_scores))
+        probabilities = exp_scores / exp_scores.sum()
     
     return prediction, sentiment_label, probabilities
 
@@ -157,24 +298,17 @@ def main():
     
     # Sidebar
     with st.sidebar:
-        st.header("📊 Model Information")
-        
-        if metadata:
-            st.info(f"**Best Model:** {metadata.get('best_model', 'N/A')}")
-            st.metric("Training Samples", metadata.get('training_samples', 'N/A'))
-            st.metric("Test Samples", metadata.get('test_samples', 'N/A'))
-            st.metric("Features", metadata.get('feature_count', 'N/A'))
-        
+        st.markdown("<h1 style='text-align: center; color: white;'>📊 Model Information</h1>", unsafe_allow_html=True)
         st.markdown("---")
         
-        # Model selection
         st.header("🤖 Model Selection")
         available_models = list(all_models.keys()) if all_models else [metadata.get('best_model', 'Best Model')]
         
         selected_model_name = st.selectbox(
             "Choose a model:",
             available_models,
-            index=0
+            index=0,
+            help="Select a machine learning model for sentiment prediction"
         )
         
         # Use selected model
@@ -184,84 +318,79 @@ def main():
         
         # Model performance
         if metadata and 'model_performance' in metadata:
-            st.header("📈 Model Performance")
+            st.header("� Model Stats")
             perf_df = pd.DataFrame(metadata['model_performance'])
             
             for _, row in perf_df.iterrows():
                 if row['Model'] == selected_model_name:
-                    st.metric("Accuracy", f"{row['Accuracy']:.2%}")
-                    st.metric("Precision", f"{row['Precision']:.2%}")
-                    st.metric("Recall", f"{row['Recall']:.2%}")
-                    st.metric("F1-Score", f"{row['F1-Score']:.2%}")
+                    col_m1, col_m2 = st.columns(2)
+                    with col_m1:
+                        st.metric("Accuracy", f"{row['Accuracy']:.1%}")
+                        st.metric("Precision", f"{row['Precision']:.1%}")
+                    with col_m2:
+                        st.metric("Recall", f"{row['Recall']:.1%}")
+                        st.metric("F1-Score", f"{row['F1-Score']:.1%}")
                     break
+        
+        st.markdown("---")
+        
+        # Dataset info
+        if metadata:
+            st.header("📁 Dataset Info")
+            st.info(f"**Training:** {metadata.get('training_samples', 'N/A')} reviews")
+            st.info(f"**Testing:** {metadata.get('test_samples', 'N/A')} reviews")
+            st.info(f"**Features:** {metadata.get('feature_count', 'N/A')} TF-IDF")
         
         st.markdown("---")
         
         # About
         st.header("ℹ️ About")
         st.markdown("""
-        This application uses Machine Learning to analyze 
-        the sentiment of customer product reviews.
+        <div style='background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 10px;'>
+        This application uses Machine Learning to analyze the sentiment of customer product reviews.
         
-        **Sentiment Classes:**
-        - 😊 Positive
-        - 😐 Neutral
-        - 😞 Negative
-        """)
+        <br><br><b>Sentiment Classes:</b>
+        <br>😊 Positive
+        <br>😐 Neutral
+        <br>😞 Negative
+        </div>
+        """, unsafe_allow_html=True)
     
     # Main content
-    col1, col2 = st.columns([2, 1])
+    col1, col2 = st.columns([3, 2])
     
     with col1:
-        st.header("📝 Enter Review Text")
+        st.markdown("<h2 style='color: #667eea;'>📝 Enter Review Text</h2>", unsafe_allow_html=True)
         
         # Text input
         review_text = st.text_area(
-            "Type or paste a product review:",
-            height=150,
-            placeholder="Example: This phone is amazing! Great camera quality and long battery life. Highly recommended!",
-            help="Enter a product review to analyze its sentiment"
+            "Enter Review",
+            height=200,
+            placeholder="Example: This phone is amazing! Great camera quality and long battery life.",
+            help="Type or paste a product review to analyze its sentiment",
+            label_visibility="collapsed"
         )
         
         # Predict button
-        predict_button = st.button("🔍 Analyze Sentiment", type="primary", use_container_width=True)
-        
-        # Sample reviews
-        st.markdown("---")
-        st.subheader("💡 Try Sample Reviews")
-        
-        sample_reviews = {
-            "Positive": "Absolutely love this product! Excellent quality and fast delivery. Best purchase ever!",
-            "Negative": "Terrible experience. Product arrived damaged and customer service was unhelpful. Very disappointed.",
-            "Neutral": "It's okay. Does what it's supposed to do. Nothing special but gets the job done."
-        }
-        
-        col_sample1, col_sample2, col_sample3 = st.columns(3)
-        
-        with col_sample1:
-            if st.button("😊 Positive Sample", use_container_width=True):
-                review_text = sample_reviews["Positive"]
-                st.rerun()
-        
-        with col_sample2:
-            if st.button("😐 Neutral Sample", use_container_width=True):
-                review_text = sample_reviews["Neutral"]
-                st.rerun()
-        
-        with col_sample3:
-            if st.button("😞 Negative Sample", use_container_width=True):
-                review_text = sample_reviews["Negative"]
-                st.rerun()
+        col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
+        with col_btn2:
+            predict_button = st.button("🔍 Analyze Sentiment", type="primary", use_container_width=True)
     
     with col2:
-        st.header("🎯 Results")
+        st.markdown("<h2 style='color: #667eea;'>🎯 Results</h2>", unsafe_allow_html=True)
         
         result_placeholder = st.empty()
         
         # Display instructions if no prediction yet
         if not predict_button and not review_text:
             with result_placeholder.container():
-                st.info("👈 Enter a review and click 'Analyze Sentiment' to see results")
+                st.markdown("""
+                    <div style='background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%); 
+                                padding: 3rem; border-radius: 20px; text-align: center; border: 2px dashed #667eea;'>
+                        <h3 style='color: #667eea;'>👈 Ready to Analyze</h3>
+                        <p style='color: #666; font-size: 16px;'>Enter a review and click the button to see results</p>
+                    </div>
+                """, unsafe_allow_html=True)
     
     # Prediction
     if predict_button and review_text:
@@ -281,12 +410,15 @@ def main():
                         with result_placeholder.container():
                             # Sentiment result
                             emoji = get_sentiment_emoji(sentiment_label)
-                            color = get_sentiment_color(sentiment_label)
+                            
+                            # Determine box class
+                            box_class = "positive-box" if sentiment_label == "Positive" else "negative-box" if sentiment_label == "Negative" else "neutral-box"
                             
                             st.markdown(
-                                f"<div style='text-align: center; padding: 2rem; background-color: {color}20; border-radius: 10px; border: 2px solid {color};'>"
-                                f"<h1 style='color: {color};'>{emoji}</h1>"
-                                f"<h2 style='color: {color};'>{sentiment_label}</h2>"
+                                f"<div class='result-box {box_class}'>"
+                                f"<h1 style='color: white; font-size: 72px; margin: 0;'>{emoji}</h1>"
+                                f"<h2 style='color: white; margin: 10px 0; font-size: 36px;'>{sentiment_label}</h2>"
+                                f"<p style='color: rgba(255,255,255,0.9); font-size: 16px;'>Sentiment Detected</p>"
                                 f"</div>",
                                 unsafe_allow_html=True
                             )
@@ -294,47 +426,73 @@ def main():
                             st.markdown("<br>", unsafe_allow_html=True)
                             
                             # Confidence scores
-                            if probabilities is not None:
-                                st.subheader("📊 Confidence Scores")
+                            if probabilities is not None and len(probabilities) == 3:
+                                st.subheader("📊 Confidence Distribution")
                                 
                                 labels = ['Negative', 'Neutral', 'Positive']
-                                colors_list = ['#dc3545', '#ffc107', '#28a745']
+                                colors_list = ['#ee0979', '#f093fb', '#38ef7d']
                                 
-                                # Create bar chart
+                                # Create enhanced bar chart
                                 fig = go.Figure(data=[
                                     go.Bar(
                                         x=labels,
                                         y=probabilities * 100,
-                                        marker_color=colors_list,
+                                        marker=dict(
+                                            color=colors_list,
+                                            line=dict(color='rgba(255,255,255,0.5)', width=2)
+                                        ),
                                         text=[f"{p:.1f}%" for p in probabilities * 100],
-                                        textposition='auto',
+                                        textposition='outside',
+                                        textfont=dict(size=14, color='#333', family='Poppins'),
                                     )
                                 ])
                                 
                                 fig.update_layout(
-                                    title="Probability Distribution",
-                                    xaxis_title="Sentiment",
+                                    title=dict(
+                                        text="Probability Distribution",
+                                        font=dict(size=18, color='#667eea', family='Poppins', weight=600)
+                                    ),
+                                    xaxis_title="Sentiment Category",
                                     yaxis_title="Confidence (%)",
-                                    yaxis_range=[0, 100],
+                                    yaxis_range=[0, 105],
                                     showlegend=False,
-                                    height=300
+                                    height=350,
+                                    paper_bgcolor='rgba(0,0,0,0)',
+                                    plot_bgcolor='rgba(102,126,234,0.05)',
+                                    font=dict(family='Poppins', size=12, color='#333'),
+                                    margin=dict(t=60, b=40, l=40, r=40)
                                 )
                                 
                                 st.plotly_chart(fig, use_container_width=True)
                                 
-                                # Display confidence metrics
+                                # Display confidence metrics in cards
+                                st.markdown("<br>", unsafe_allow_html=True)
                                 for i, (label, prob) in enumerate(zip(labels, probabilities)):
-                                    st.metric(
-                                        label=f"{label} Confidence",
-                                        value=f"{prob*100:.2f}%"
-                                    )
+                                    col_metric = st.columns([1])[0]
+                                    with col_metric:
+                                        st.markdown(
+                                            f"<div class='metric-card'>"
+                                            f"<h4 style='color: {colors_list[i]}; margin: 0;'>{label}</h4>"
+                                            f"<p style='font-size: 24px; font-weight: 700; color: #333; margin: 5px 0;'>{prob*100:.2f}%</p>"
+                                            f"</div>",
+                                            unsafe_allow_html=True
+                                        )
     
     # Footer
     st.markdown("---")
     st.markdown("""
-        <div style='text-align: center; color: #666; padding: 1rem;'>
-            <p>Built with ❤️ using Streamlit | Customer Sentiment Analysis Project</p>
-            <p>Model trained on e-commerce product reviews</p>
+        <div style='text-align: center; padding: 2rem; background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%); 
+                    border-radius: 20px; margin-top: 2rem;'>
+            <h3 style='color: #667eea; margin-bottom: 10px;'>Customer Sentiment Analysis</h3>
+            <p style='color: #666; font-size: 14px; margin: 5px 0;'>
+                Built by <b>Anshul Jadwani, Harshil Patni & Dhruv Hirani</b>
+            </p>
+            <p style='color: #888; font-size: 12px; margin: 5px 0;'>
+                NMIMS University | BTech in AI & Data Science
+            </p>
+            <p style='color: #999; font-size: 11px; margin-top: 10px;'>
+                Powered by Support Vector Machine with 94.69% accuracy | Trained on 3,316 e-commerce reviews
+            </p>
         </div>
     """, unsafe_allow_html=True)
 
