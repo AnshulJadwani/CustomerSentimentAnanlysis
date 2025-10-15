@@ -240,7 +240,7 @@ CustomerSentimentAnalysis/
 Company: E-commerce with 10,000 reviews/month
 
 Manual Analysis Cost: 10,000 × $0.50 = $5,000/month
-Automated Cost: Setup + Hosting = ~$100/month
+Automatup + Hted Cost: Seosting = ~$100/month
 Annual Savings: ($5,000 - $100) × 12 = $58,800
 ```
 
