@@ -1,0 +1,276 @@
+Customer Sentiment Analysis on E-Commerce Product Reviews
+
+Project Report submitted in the partial fulfilment
+
+
+of
+
+(Bachelors in Technology)
+In
+      (Artificial Intelligence & Data Science)
+
+by
+
+
+
+
+      Anshul Jadwani (S002)
+      Harshil Patni(S007)
+   Dhruv Hirani(S021)
+
+
+
+Under the supervision of
+
+Dr. Ankur Ratmele
+
+(Assistant Professor, STME, MPSTME)
+
+SVKM's NMIMS University
+(Deemed-to-be University)
+
+
+MUKESH PATEL SCHOOL OF TECHNOLOGY MANAGEMENT & ENGINEERING (MPSTME)
+
+Vile Parle (W), Mumbai-56
+(2025-2026)
+
+
+CERTIFICATE
+
+This is to certify that the project entitled "Customer Sentiment Analysis on E-Commerce Product Reviews", has been done by Mr. (Anshul Jadwani,Harshil Patni and Dhruv Hirani)under my guidance and supervision & has been submitted in partial fulfilment of the degree of (name of the program) in (name of the stream) of MPSTME, SVKM's NMIMS (Deemed-to-be University), Mumbai, India.
+
+
+Dr. Ankur Ratmele	       Examiner 
+
+Date: 15 October, 2025
+
+Place: Indore
+
+       
+    (HoD) 
+
+ACKNOWLEDGEMENT
+
+Student Names
+
+NAME
+ROLL NO.
+SAP ID
+Anshul Jadwani
+S002
+70562200050
+Harshil Patni
+S007
+70562200083
+Dhruv Hirani
+S021
+70562300107
+
+ABSTRACT
+
+
+
+Businesses get a lot of customer feedback online from reviews and social media. It is hard to read all of this feedback manually. This makes it difficult for companies to understand what customers are thinking in real time. This project provides an automated solution to this problem. We built a web application that uses machine learning to analyse customer sentiment. The application quickly tells if a piece of text is positive, negative, or neutral. The core of the system is a Logistic Regression model. We used Natural Language Processing to clean the text data for training. The application was built using Python and Flask. The tool has a simple interface where users can enter text. It shows the sentiment result instantly on a visual dashboard. This project offers a useful tool for businesses to monitor customer opinions. It helps them make better decisions and improve their services.
+
+Table of Contents
+Topics	Page
+List of Figures	i
+List of Tables	xvi
+Abbreviations	xix
+
+
+Chapter 1 Introduction
+
+1.1
+
+1.2
+
+Chapter 2 Literature survey 2.1
+2.2
+
+2.3
+
+Chapter 3 Methodology and Implementation
+
+3.1
+
+3.2
+
+Chapter 4 Result and Analysis
+
+4.1
+
+4.2
+
+Chapter 5 Advantages, Limitations and Applications
+
+5.1 Advantages
+
+5.2 Limitations
+
+5.3 Applications
+
+Conclusion and Future Scope
+
+References
+
+Appendix A: Soft Code Flowcharts Appendix B: Data Sheets Appendix C: List of Components
+Appendix D: List of Paper Presented and Published.
+
+List of the figures
+
+Fig No
+Name of the figure
+Page No
+
+
+
+
+
+
+
+List of tables
+
+Table No
+Name of the Table
+Page No
+
+
+
+
+
+
+Abbreviations
+
+Table No
+
+Name of the Table
+Page No
+
+
+
+
+
+
+
+
+
+
+
+Note: Each table should be included on separate page.
+
+Chapter 1 Introduction
+
+
+1.1 Background of the project topic
+     Online shopping has grown rapidly in the last decade. People now buy products from websites instead of stores. This change led to a huge rise in customer reviews. After a purchase, buyers share their experience by writing reviews. These reviews guide future buyers. A positive review can boost sales. A negative review can warn others about problems.
+     Businesses need to understand these reviews to improve products and services. Reviews point out strengths and weaknesses. They highlight issues in quality, features, or delivery. They also show what customers value most. Acting on this feedback can raise customer satisfaction and loyalty.
+     However, the large volume of reviews makes manual analysis impossible. Major e-commerce platforms receive thousands of reviews daily. Even a small vendor may get hundreds each month. Reading, sorting, and understanding all reviews by hand takes too much time. It also costs a lot of resources.
+     Sentiment analysis offers a solution. It uses software to read text and detect customer emotion. Natural Language Processing cleans and prepares text for analysis. Machine learning trains models to classify reviews as positive, neutral, or negative. This automated approach can process thousands of reviews in seconds.
+	This project builds an end-to-end sentiment analysis system for e-commerce reviews. It focuses on mobile phone reviews from a dataset of over three thousand entries. The system implements text cleaning, feature extraction using TF-IDF, and compares three models: Logistic Regression, Naive Bayes, and Support Vector Machine. It delivers fast, accurate insights to help businesses respond to customer feedback quickly and effectively.
+1.2 Motivation and scope of the report
+Customers trust reviews more than ads. They read reviews to decide what to buy. Businesses need to know these opinions fast. Manual reading is slow and costly. They need a tool that can read reviews at scale. This project shows how to build that tool. It uses Python code and open libraries. It reads reviews from a file. It cleans the text. It trains models to find sentiment. It saves the best model for use.
+The system can handle thousands of reviews in seconds. It works on English text only. It focuses on product reviews for mobile phones. It does not cover images or other languages. It does not gather live reviews from websites. The report explains each step clearly. It shows code and results. It guides readers on how to set up the system. It shows how to test and use the web app.
+
+
+ 1.3 Problem statement
+E-commerce companies get thousands of customer reviews every day. Each review contains valuable feedback. Reading them all by hand is impossible. It takes too much time and costs too much money. Companies need to know when customers are happy or upset. They need to spot problems early. They need to respond to complaints fast. Manual review reading slows down all these tasks. Current methods have many issues. Human readers get tired and make errors. Different people may read the same review differently. Some reviews get missed. Analyzing patterns across thousands of reviews is very hard.
+Businesses lose money when they cannot process feedback quickly. Unhappy customers may leave if problems are not fixed fast. Good feedback gets lost in the flood of reviews. Companies cannot improve products without clear insights. This project solves these problems with automation. It builds a system that reads reviews like humans do. It sorts them into positive, neutral, and negative groups. It works much faster than human readers. It gives consistent results every time.
+ 1.4 Salient contribution
+This project delivers a complete sentiment analysis system for e-commerce reviews. It uses Python and open-source libraries. The system reads and cleans review text. It extracts features using TF-IDF with single words and word pairs. It trains three machine learning models: Logistic Regression, Naive Bayes, and Support Vector Machine. Each model is evaluated using accuracy, precision, recall, and F1-score. The SVM model achieves the highest accuracy at 94.7 percent.
+The system processes reviews in milliseconds. It can handle thousands of reviews at once. It includes a web application built with Streamlit. The web app lets users enter a review and see the sentiment and confidence score. It also offers a command-line tool for batch processing.
+All code is well documented. The report explains each step in clear, simple language. It shows how to set up the environment, run the code, and interpret results. This work helps businesses save time and cost. It gives fast and reliable insights into customer feedback. It proves the value of applying AI to real-world business challenges.
+ 1.5 Organization of report
+This report has nine main chapters. Chapter 1 introduces the project. Chapter 2 reviews related work in sentiment analysis. Chapter 3 defines system requirements and analysis. Chapter 4 describes the system design and architecture. Chapter 5 explains the implementation details. Chapter 6 presents results and discussion. Chapter 7 covers testing and validation. Chapter 8 offers the conclusion and lessons learned. Chapter 9 suggests future enhancements.
+
+After these chapters, the report lists all references. Appendices follow with installation steps, code examples, a glossary, and the project timeline.
+
+Each chapter builds on the previous one to guide the reader from project context to technical solution and evaluation. The flow moves from why the project matters to how it works and what it achieves. Simple language ensures clarity and a natural reading experience. Continuous narrative ties sections together. Readers can follow the report in order or jump to the sections they need. This structure makes the report easy to use for both technical and nontechnical audiences.
+
+
+Chapter 2 Literature survey
+
+
+Discussion and comparison of literature survey.
+
+
+
+2.1 Introduction to overall topic (generate background for literature survey with reference to minimum 15 references)
+
+2.2 Exhaustive literature survey of atleast 10 good journal or conference papers related to topic preferably starting from reference 1 to 15 given in the reference section serially. Literature survey should lead finally to identifying the gap in the research area and hence definition of problem statement.
+
+Note:
+
+
+1. Please include the citations for the papers referred
+2. Include it in the reference list at the same location as the number in the text.
+What is a literature review?
+A literature review summarizes and synthesizes the existing scholarly research on a particular topic. Literature reviews are a form of academic writing commonly used in the sciences, social sciences, and humanities. However, unlike research papers, which establish new arguments and make original contributions, literature reviews organize and present existing research. As a student, you might produce a literature review as a standalone paper or as a portion of a larger research project.
+Literature Review should be written in paragraph pattern in report and in comparative form in presentation.
+
+          Chapter 3 Methodology and Implementation
+
+
+4.1 Block diagram
+
+4.2 Hardware description
+
+4.3 Software description, flowchart / algorithm
+
+
+
+This chapter can comprise of actual implementation photos and their description.
+
+     Chapter 4 Results and Analysis
+This shall include a thorough evaluation and investigation carried out. It should also bring out your contributions from the study. The discussion shall logically lead to inferences and conclusions as well as scope for possible further future work.
+
+
+
+Note:
+
+
+Include the IEEE or any other standards that you have adhered to test the validity of the results.
+Link for IEEE standards
+
+https://www.ieee.org/content/ieee-org/en/standards/index.html/
+
+Chapter 5
+
+Advantages, Limitations and Applications
+
+        Chapter 6 Conclusion and Future Scope
+> A brief report of the work carried out, conclusions derived from logical analysis presented in the Results and Discussions chapter.
+> Scope for future work should be stated lucidly in this chapter.
+
+
+
+References
+
+
+> Number all the references.
+> Use a chronological bibliography.
+> Each listed reference in the bibliography must be cited in the text of the report.
+> For a book give the name(s) of author(s), title of book, edition, chapter number, and page numbers, publisher, location and year of publication.
+
+> Example:
+[25] Jones, C.D., A.B. Smith, and E.F. Roberts, Efficient Real-Time Fine-Grained Concurrency, 2nd Ed., Ch. 3, pp. 145-7, Tata McGraw- Hill, New Delhi, 1994.
+
+> For a journal/conference paper, give the name(s) of authors, title of paper, name of journal/ conference, volume and issue number (for journal), page numbers, and month and year of publication.
+> Example:
+[23] Prasad, A.B., Kumar, C.D., Jones, E.F., and Frost, P.: "Cable Television Broadband Architectures", IEEE Comm. Magazine, vol. 39,
+pp. 134-141, June 1991.
+
+Appendix A: Soft Code Flowcharts
+
+Appendix B: Data Sheets
+
+Appendix C: List of Components
+
+Appendix D: List of Paper Presented and Published
+
+
+
+> List of papers on the topic of the report published by the candidates.
+> This may also be included in the contents.
+> The candidates may also include reprints of his/her publications after the literature citation.
